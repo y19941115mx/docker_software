@@ -7,7 +7,6 @@ services:
     volumes:
       - ./data/db:/var/lib/mysql
       - ./conf/my.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
-    restart: always
     ports:
       - 13306:3306
     networks:

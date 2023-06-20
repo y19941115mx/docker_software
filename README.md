@@ -1,57 +1,5 @@
-# docker-compose Hadoop 快速部署
-
-### 4）Hadoop 部署（非高可用）
-
-```bash
-git clone https://gitee.com/hadoop-bigdata/docker-compose-hadoop.git
-
-cd docker-compose-hadoop/hadoop
-
-# 开始部署
-# 这里-f docker-compose.yaml可以省略，如果文件名不是docker-compose.yaml就不能省略，-d 后台执行
-docker-compose -f docker-compose.yaml up -d
-
-# 查看部署状态
-docker-compose -f docker-compose.yaml ps
-```
-
-![输入图片说明](images/1image.png)
-
-HDFS：`http://ip:30070/`
-
-YARN：`http://ip:30070/`
-
-### 5）Hadoop HA 部署（高可用）
-
-```bash
-# 如已下载可以忽略执行下载命令
-git clone https://gitee.com/hadoop-bigdata/docker-compose-hadoop.git
-
-cd docker-compose-hadoop/hadoop-ha
-
-# 开始部署
-# 这里-f docker-compose.yaml可以省略，如果文件名不是docker-compose.yaml就不能省略，-d 后台执行
-docker-compose -f docker-compose.yaml up -d
-
-# 查看部署状态
-docker-compose -f docker-compose.yaml ps
-```
-
-![输入图片说明](images/2image.png)
-
-HDFS：`http://ip:30070`  、`http://ip:30071` 
-
-YARN：`http://ip:30888`、`http://ip:30889`
-
-### 6）Hadoop Hive 部署（包括Hadoop）
-
-#### 1、下载
-
-```bash
-git clone https://gitee.com/hadoop-bigdata/docker-compose-hadoop.git
-```
-
-#### 2、创建网络
+### Hadoop Hive 部署（包括Hadoop）
+#### 1、创建网络
 
 ```bash
 # 创建，注意不能使用hadoop_network，要不然启动hs2服务的时候会有问题！！！
@@ -61,10 +9,10 @@ docker network create hadoop-network
 docker network ls
 ```
 
-#### 3、部署 mysql5.7
+#### 2、部署 mysql5.7
 
 ```bash
-cd docker-compose-hadoop/mysql
+cd mysql
 
 docker -f mysql-compose.yaml up -d
 
@@ -74,10 +22,10 @@ docker -f mysql-compose.yaml ps
 docker exec -it mysql mysql -uroot -p123456
 ```
 
-#### 4、部署 Hadoop Hive
+#### 3、部署 Hadoop Hive
 
 ```bash
-cd docker-compose-hadoop/hadoop_hive
+cd ../hive
 
 docker-compose -f docker-compose.yaml up -d
 
@@ -90,9 +38,3 @@ docker exec -it hive-hiveserver2 hive -e "show databases";
 # hiveserver2
 docker exec -it hive-hiveserver2 beeline -u jdbc:hive2://hive-hiveserver2:10000  -n hadoop -e "show databases;"
 ```
-
-![输入图片说明](images/2image.png)
-
-上面只是快速部署的操作，如需详细教程，可关注我的公众号【大数据与云原生技术分享】，在公众号号里回复 **dch** 即可获取完整版教程~
-
-![输入图片说明](images/3image.png)
