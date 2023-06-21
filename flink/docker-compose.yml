@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  zeppelin:
+      image: apache/zeppelin
+      restart: always
+      environment:
+        - FLINK_HOME=/opt/flink
+      volumes:
+        - /flink-1.12.7:/opt/flink
+      ports:
+
+        - 8080:8080
+
+        - 8081:8081
