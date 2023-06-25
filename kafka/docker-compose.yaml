@@ -32,7 +32,6 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 ## kafka运行是基于zookeeper
 
-
   kafdrop:
     image: 'obsidiandynamics/kafdrop:latest'
     networks:
@@ -45,7 +44,6 @@ services:
     depends_on:
       - kafka1
       - kafka2
-
 
   notebook:
     build: .
