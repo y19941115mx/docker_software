@@ -2,19 +2,59 @@ version: '3'
 
 services:
   zookeeper:
-    image: wurstmeister/zookeeper ## 镜像
-    ports:
-      - "2181:2181" ## 对外暴露的端口号
+    image: 'bitnami/zookeeper:latest'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    volumes:
+      - 'zookeeper_data:/bitnami'
+    networks:
+      - hadoop-network
 
   kafka:
-    image: wurstmeister/kafka ## 镜像
-    container_name: kafka1
+    image: 'bitnami/kafka:latest'
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    volumes:
+      - 'kafka_data:/bitnami'
+    networks:
+      - hadoop-network
     depends_on:
       - zookeeper
-    ports:
-      - "9092:9092"
+
+  kafdrop:
+    image: 'obsidiandynamics/kafdrop:latest'
+    networks:
+      - hadoop-network
     environment:
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092 ## 指明 kafka 当前节点监听本机的哪个网卡地址
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092 ## 指明客户端连接 kafka 的地址与端口号
-      KAFKA_BROKER_ID: 0
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 ## kafka运行是基于zookeeper
+      - KAFKA_BROKERCONNECT=kafka:9092
+      - JVM_OPTS=-Xms32m -Xmx64m
+    ports:
+      - '9000:9000'
+    depends_on:
+      - kafka
+
+
+  notebook:
+    build: .
+    volumes:
+      - ./data:/home/jovyan/work/data
+      - ./notebooks:/home/jovyan/work/notebooks
+    ports:
+      - 8888:8888
+    networks:
+      - hadoop-network
+
+
+volumes:
+  zookeeper_data:
+    external: false
+
+  kafka_data:
+    external: false
+
+networks:
+  hadoop-network:
+    external: true
+

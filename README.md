@@ -2,7 +2,7 @@
 #### 1、创建网络
 
 ```bash
-# 创建，注意不能使用hadoop_network，要不然启动hs2服务的时候会有问题！！！
+# 创建网络
 docker network create hadoop-network
 
 # 查看
