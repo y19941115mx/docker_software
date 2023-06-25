@@ -16,6 +16,7 @@ services:
     environment:
       KAFKA_LISTENERS: PLAINTEXT://kafka1:9092 ## 指明 kafka 当前节点监听本机的哪个网卡地址
       # KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092 ## 指明客户端连接 kafka 的地址与端口号 默认为KAFKA_LISTENERS的值
+      # KAFKA_LOG_DIR: /kafka ## kafka保存数据的文件夹位置
       KAFKA_BROKER_ID: 0
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 ## kafka运行是基于zookeeper
 
@@ -28,7 +29,8 @@ services:
       - zookeeper
     environment:
       KAFKA_LISTENERS: PLAINTEXT://kafka2:9092 ## 指明 kafka 当前节点监听本机的哪个网卡地址
-      # KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9092 
+      # KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9092
+      # KAFKA_LOG_DIR: /kafka ## kafka保存数据的文件夹位置
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 ## kafka运行是基于zookeeper
 
