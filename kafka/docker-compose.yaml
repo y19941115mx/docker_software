@@ -2,38 +2,49 @@ version: '3'
 
 services:
   zookeeper:
-    image: 'bitnami/zookeeper:latest'
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-    volumes:
-      - 'zookeeper_data:/bitnami'
+    image: wurstmeister/zookeeper ## 镜像
     networks:
       - hadoop-network
 
-  kafka:
-    image: 'bitnami/kafka:latest'
-    environment:
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-      - ALLOW_PLAINTEXT_LISTENER=yes
-    volumes:
-      - 'kafka_data:/bitnami'
+  kafka1:
+    image: wurstmeister/kafka ## 镜像
+    container_name: kafka1
     networks:
       - hadoop-network
     depends_on:
       - zookeeper
+    environment:
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092 ## 指明 kafka 当前节点监听本机的哪个网卡地址
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092 ## 指明客户端连接 kafka 的地址与端口号
+      KAFKA_BROKER_ID: 0
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 ## kafka运行是基于zookeeper
+
+  kafka2:
+    image: wurstmeister/kafka ## 镜像
+    container_name: kafka2
+    networks:
+      - hadoop-network
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092 ## 指明 kafka 当前节点监听本机的哪个网卡地址
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9092 ## 指明客户端连接 kafka 的地址与端口号
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 ## kafka运行是基于zookeeper
+
 
   kafdrop:
     image: 'obsidiandynamics/kafdrop:latest'
     networks:
       - hadoop-network
     environment:
-      - KAFKA_BROKERCONNECT=kafka:9092
+      - KAFKA_BROKERCONNECT=kafka1:9092,kafka2:9092
       - JVM_OPTS=-Xms32m -Xmx64m
     ports:
       - '9000:9000'
     depends_on:
-      - kafka
+      - kafka1
+      - kafka2
 
 
   notebook:
@@ -42,17 +53,10 @@ services:
       - ./data:/home/jovyan/work/data
       - ./notebooks:/home/jovyan/work/notebooks
     ports:
-      - 8888:8888
+      - 18888:8888
     networks:
       - hadoop-network
 
-
-volumes:
-  zookeeper_data:
-    external: false
-
-  kafka_data:
-    external: false
 
 networks:
   hadoop-network:
