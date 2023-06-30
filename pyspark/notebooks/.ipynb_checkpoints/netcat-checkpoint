@@ -1,0 +1,1 @@
+docker run --rm -it --network hadoop-network --name netcat subfuzion/netcat -kl 9999
